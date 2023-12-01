@@ -22,7 +22,7 @@ class FlutterWangyanWebview extends StatelessWidget {
     if (Platform.isAndroid) {
       return const AndroidView(
         viewType: 'plugins.flutter.io/flutter_wangyan_webview_box',
-        creationParams: {'text': "Flutter传给AndroidTextView的参数"},
+        creationParams: {'url': "https://www.baidu.com/"},
         creationParamsCodec: StandardMessageCodec(),
       );
     } else {
@@ -39,11 +39,14 @@ class FlutterWangyanWebview extends StatelessWidget {
         ),
         body: Column(
           children: [
-            // ElevatedButton(
-            //     onPressed: () {
-            //       platform.invokeMethod("setText", {'name': "张三", 'age': 18});
-            //     },
-            //     child: const Text("传递参数给原生view")),
+            ElevatedButton(
+                onPressed: () {
+                  platform.invokeMethod("setUrl", {
+                    'url':
+                        "https://www.gzsle.com/campaign/wholesalerConference2023/index.html"
+                  });
+                },
+                child: const Text("修改地址")),
             Expanded(
                 child: Center(
               child: platformView(),
