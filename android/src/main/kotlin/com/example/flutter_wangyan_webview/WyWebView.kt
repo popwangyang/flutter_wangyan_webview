@@ -1,5 +1,6 @@
 package com.example.flutter_wangyan_webview
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import android.view.View
@@ -12,6 +13,7 @@ import io.flutter.plugin.common.StandardMessageCodec
 import io.flutter.plugin.platform.PlatformView
 import io.flutter.plugin.platform.PlatformViewFactory
 
+@SuppressLint("SetJavaScriptEnabled")
 class WyWebView(context: Context, messenger: BinaryMessenger, viewId: Int, args: Map<String, Any>?) : PlatformView, MethodChannel.MethodCallHandler {
 
     private val webView: WebView = WebView(context)

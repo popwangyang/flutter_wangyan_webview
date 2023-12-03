@@ -20,10 +20,11 @@ class FlutterWangyanWebview extends StatelessWidget {
 
   Widget platformView() {
     if (Platform.isAndroid) {
-      return const AndroidView(
+      return AndroidView(
         viewType: 'plugins.flutter.io/flutter_wangyan_webview_box',
-        creationParams: {'url': "https://www.baidu.com/"},
-        creationParamsCodec: StandardMessageCodec(),
+        creationParams: const {'url': "https://www.baidu.com/"},
+        creationParamsCodec: const StandardMessageCodec(),
+        onPlatformViewCreated: (id) {},
       );
     } else {
       return Container();
@@ -34,24 +35,8 @@ class FlutterWangyanWebview extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text("Flutter"),
-        ),
-        body: Column(
-          children: [
-            ElevatedButton(
-                onPressed: () {
-                  platform.invokeMethod("setUrl", {
-                    'url':
-                        "https://www.gzsle.com/campaign/wholesalerConference2023/index.html"
-                  });
-                },
-                child: const Text("修改地址")),
-            Expanded(
-                child: Center(
-              child: platformView(),
-            )),
-          ],
+        body: Center(
+          child: platformView(),
         ),
       ),
     );
