@@ -2,10 +2,12 @@ package com.example.flutter_wangyan_webview
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.os.Build
 import android.util.Log
 import android.view.View
 import android.webkit.WebView
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -13,6 +15,7 @@ import io.flutter.plugin.common.StandardMessageCodec
 import io.flutter.plugin.platform.PlatformView
 import io.flutter.plugin.platform.PlatformViewFactory
 
+@RequiresApi(Build.VERSION_CODES.KITKAT)
 @SuppressLint("SetJavaScriptEnabled")
 class WyWebView(context: Context, messenger: BinaryMessenger, viewId: Int, args: Map<String, Any>?) : PlatformView, MethodChannel.MethodCallHandler {
 
@@ -24,6 +27,9 @@ class WyWebView(context: Context, messenger: BinaryMessenger, viewId: Int, args:
             val url = it["url"] as String
             webView.loadUrl(url)
             webView.settings.javaScriptEnabled = true
+            webView.evaluateJavascript("lll"){
+
+            }
             methodChannel = MethodChannel(messenger, "com.example.flutterwangyanwebview.methodchannel")
             methodChannel.setMethodCallHandler(this)
         }
