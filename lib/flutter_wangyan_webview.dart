@@ -1,14 +1,42 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_wangyan_webview/android_webview_widget.dart';
+import 'package:flutter_wangyan_webview/web_view.dart';
+import 'package:flutter_wangyan_webview/web_view_channel.dart';
+
+typedef WebViewCreatedCallback = void Function(WebViewController controller);
+
+class WebViewController {
+  final WebView _webView = WebView(channel: WebViewMessageChannel());
+
+  WebViewController();
+
+  Future<void> init() async {
+    return await _webView.create();
+  }
+
+  Future<void> setJavaScriptEnabled(bool flag) async {
+    return await _webView.webSettings.setJavaScriptEnabled(flag);
+  }
+
+  Future<String?> evaluateJavascript(String javascriptString) async {
+    return _webView.evaluateJavascript(javascriptString);
+  }
+}
 
 class FlutterWangyanWebview extends StatelessWidget {
   static const MethodChannel _channel =
       MethodChannel('flutter_wangyan_webview');
 
-  const FlutterWangyanWebview({Key? key}) : super(key: key);
+  final bool? javaScriptEnabled;
+
+  final WebViewCreatedCallback? onWebViewCreated;
+
+  const FlutterWangyanWebview(
+      {Key? key, this.javaScriptEnabled, this.onWebViewCreated})
+      : super(key: key);
 
   static const platform =
       MethodChannel('com.example.flutterwangyanwebview.methodchannel');
@@ -19,15 +47,14 @@ class FlutterWangyanWebview extends StatelessWidget {
   }
 
   Widget platformView() {
-    if (Platform.isAndroid) {
-      return AndroidView(
-        viewType: 'plugins.flutter.io/flutter_wangyan_webview_box',
-        creationParams: const {'url': "https://www.baidu.com/"},
-        creationParamsCodec: const StandardMessageCodec(),
-        onPlatformViewCreated: (id) {},
-      );
-    } else {
+    if (Platform.isIOS) {
       return Container();
+    } else {
+      return AndroidWebViewWidget(
+        viewType: "plugins.flutter.io/flutter_wangyan_webview_box",
+        javaScriptEnabled: javaScriptEnabled ?? false,
+        onWebViewCreated: onWebViewCreated,
+      );
     }
   }
 

@@ -8,10 +8,7 @@ import android.view.View
 import android.webkit.WebView
 import android.widget.TextView
 import androidx.annotation.RequiresApi
-import io.flutter.plugin.common.BinaryMessenger
-import io.flutter.plugin.common.MethodCall
-import io.flutter.plugin.common.MethodChannel
-import io.flutter.plugin.common.StandardMessageCodec
+import io.flutter.plugin.common.*
 import io.flutter.plugin.platform.PlatformView
 import io.flutter.plugin.platform.PlatformViewFactory
 
@@ -19,19 +16,19 @@ import io.flutter.plugin.platform.PlatformViewFactory
 @SuppressLint("SetJavaScriptEnabled")
 class WyWebView(context: Context, messenger: BinaryMessenger, viewId: Int, args: Map<String, Any>?) : PlatformView, MethodChannel.MethodCallHandler {
 
-    private val webView: WebView = WebView(context)
+    private val webView: WebView = MyWebView(context, messenger)
     private lateinit var methodChannel: MethodChannel
 
     init {
         args?.also {
-            val url = it["url"] as String
+            val url = it["initialUrl"] as String
             webView.loadUrl(url)
-            webView.settings.javaScriptEnabled = true
-            webView.evaluateJavascript("lll"){
-
-            }
-            methodChannel = MethodChannel(messenger, "com.example.flutterwangyanwebview.methodchannel")
-            methodChannel.setMethodCallHandler(this)
+//            webView.settings.javaScriptEnabled = true
+//            webView.evaluateJavascript("lll"){
+//
+//            }
+//            methodChannel = MethodChannel(messenger, "com.example.flutterwangyanwebview.methodchannel")
+//            methodChannel.setMethodCallHandler(this)
         }
     }
 
@@ -51,12 +48,26 @@ class WyWebView(context: Context, messenger: BinaryMessenger, viewId: Int, args:
             result.notImplemented()
         }
     }
+
 }
 
 class WyWebViewFactory(private val messenger: BinaryMessenger): PlatformViewFactory(StandardMessageCodec.INSTANCE) {
 
+    @RequiresApi(Build.VERSION_CODES.KITKAT)
     override fun create(context: Context, viewId: Int, args: Any?): PlatformView {
         return WyWebView(context, messenger, viewId, args as Map<String, Any>?);
     }
 
 }
+
+class MyWebView(context: Context, messenger: BinaryMessenger): WebView(context) {
+
+    init {
+        MethodChannel(messenger, "flutter.wangyanWebView.webSettings.create").setMethodCallHandler { call, result ->
+            print(call.arguments)
+        }
+    }
+
+}
+
+
