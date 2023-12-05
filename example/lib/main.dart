@@ -53,7 +53,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       home: Center(
         child: FlutterWangyanWebview(
-          javaScriptEnabled: false,
+          javaScriptEnabled: true,
           onWebViewCreated: (WebViewController c) {
             controller = c;
           },

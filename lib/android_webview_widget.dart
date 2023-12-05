@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_wangyan_webview/flutter_wangyan_webview.dart';
 
 class AndroidWebViewWidget extends StatefulWidget {
@@ -27,6 +28,7 @@ class _AndroidWebViewWidgetState extends State<AndroidWebViewWidget> {
     super.initState();
     controller = WebViewController();
     controller.init().then((value) {
+      print("wangyanwebview:初始化");
       controller.setJavaScriptEnabled(widget.javaScriptEnabled);
     });
   }
@@ -36,6 +38,7 @@ class _AndroidWebViewWidgetState extends State<AndroidWebViewWidget> {
     return AndroidView(
       viewType: widget.viewType,
       creationParams: {"initialUrl": widget.initialUrl},
+      creationParamsCodec: const StandardMessageCodec(),
       onPlatformViewCreated: (v) {
         if (widget.onWebViewCreated != null) {
           widget.onWebViewCreated!(controller);

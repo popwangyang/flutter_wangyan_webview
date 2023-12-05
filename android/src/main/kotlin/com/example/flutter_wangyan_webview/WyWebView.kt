@@ -5,8 +5,8 @@ import android.content.Context
 import android.os.Build
 import android.util.Log
 import android.view.View
+import android.webkit.WebSettings
 import android.webkit.WebView
-import android.widget.TextView
 import androidx.annotation.RequiresApi
 import io.flutter.plugin.common.*
 import io.flutter.plugin.platform.PlatformView
@@ -63,9 +63,58 @@ class WyWebViewFactory(private val messenger: BinaryMessenger): PlatformViewFact
 class MyWebView(context: Context, messenger: BinaryMessenger): WebView(context) {
 
     init {
-        MethodChannel(messenger, "flutter.wangyanWebView.webSettings.create").setMethodCallHandler { call, result ->
-            print(call.arguments)
+        Log.d(TAG, "flutter.wangyanWebView.webSettings.create")
+        BasicMessageChannel(
+            messenger,
+            "flutter.wangyanWebView.webSettings.create",
+            StandardMessageCodec()
+        ).setMessageHandler{ message, reply ->
+            val wrapped: MutableMap<String, Any?> = HashMap()
+            try {
+                val args = message as ArrayList<*>
+                val settingsId = (args[0] as Long?) ?: throw NullPointerException("instanceIdArg unexpectedly null.")
+                val webViewId = (args[1] as Long?) ?: throw NullPointerException("instanceIdArg unexpectedly null.")
+                InstanceManager.addInstance(this.settings, settingsId)
+                InstanceManager.addInstance(this, webViewId)
+                wrapped["result"] = null
+            } catch (exception: Error) {
+                wrapped["error"] = wrapError(exception)
+            } catch (exception: RuntimeException) {
+                wrapped["error"] = wrapError(exception)
+            }
+            reply.reply(wrapped)
         }
+
+        BasicMessageChannel(
+            messenger,
+            "flutter.wangyanWebView.webSettings.setJavaScriptEnabled",
+            StandardMessageCodec()
+        ).setMessageHandler{ message, reply ->
+            val wrapped: MutableMap<String, Any?> = HashMap()
+            try {
+                val args = message as ArrayList<*>
+                val settingsId = (args[0] as Long?) ?: throw NullPointerException("instanceIdArg unexpectedly null.")
+                val flag = (args[0] as Boolean?) ?: throw NullPointerException("javaScriptEnabledArg unexpectedly null.")
+                val settings = InstanceManager.getInstance(settingsId) as WebSettings
+                Log.d(TAG, flag.toString())
+                settings.javaScriptEnabled = flag
+                wrapped["result"] = null
+            } catch (exception: Error) {
+                wrapped["error"] = wrapError(exception)
+            } catch (exception: RuntimeException) {
+                wrapped["error"] = wrapError(exception)
+            }
+            reply.reply(wrapped)
+        }
+    }
+
+    private fun wrapError(exception: Throwable): Map<String, Any>? {
+        val errorMap: MutableMap<String, Any> = HashMap()
+        errorMap["message"] = exception.toString()
+        errorMap["code"] = exception.javaClass.simpleName
+        errorMap["details"] =
+            "Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception)
+        return errorMap
     }
 
 }

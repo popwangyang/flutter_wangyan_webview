@@ -17,6 +17,7 @@ class WebSettings {
   Future<void> createFromInstance(WebSettings settings, WebView webView) async {
     int? settingsId = instanceManager.tryAddInstance(settings);
     int? webViewId = instanceManager.getInstanceId(webView);
+    print("wangyanwebview createFromInstance$_settingsId");
     if (settingsId != null) {
       channel.send("flutter.wangyanWebView.webSettings.create",
           <Object?>[settingsId, webViewId]);
@@ -24,6 +25,7 @@ class WebSettings {
   }
 
   Future<void> setJavaScriptEnabled(bool flag) async {
+    print("wangyanwebview$_settingsId");
     if (_settingsId != null) {
       await channel.send(
           "flutter.wangyanWebView.webSettings.setJavaScriptEnabled",
