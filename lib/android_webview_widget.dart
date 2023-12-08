@@ -6,7 +6,8 @@ class AndroidWebViewWidget extends StatefulWidget {
   const AndroidWebViewWidget(
       {Key? key,
       required this.viewType,
-      this.initialUrl = "https://www.gzsle.com",
+      this.initialUrl =
+          "https://testh5.gzsle.com/reportRepairFreezer?type=reportRepairFreezer&sn=dseweefef",
       this.javaScriptEnabled = true,
       this.onWebViewCreated})
       : super(key: key);
@@ -27,10 +28,6 @@ class _AndroidWebViewWidgetState extends State<AndroidWebViewWidget> {
   void initState() {
     super.initState();
     controller = WebViewController();
-    controller.init().then((value) {
-      print("wangyanwebview:初始化");
-      controller.setJavaScriptEnabled(widget.javaScriptEnabled);
-    });
   }
 
   @override
@@ -40,6 +37,11 @@ class _AndroidWebViewWidgetState extends State<AndroidWebViewWidget> {
       creationParams: {"initialUrl": widget.initialUrl},
       creationParamsCodec: const StandardMessageCodec(),
       onPlatformViewCreated: (v) {
+        print("wangyanwebview:onPlatformViewCreated");
+        controller.init().then((value) {
+          print("wangyanwebview:初始化");
+          controller.setJavaScriptEnabled(widget.javaScriptEnabled);
+        });
         if (widget.onWebViewCreated != null) {
           widget.onWebViewCreated!(controller);
         }
